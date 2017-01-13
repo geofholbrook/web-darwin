@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <script src="scripts/vexflow-min.js"></script>
+
+
+<script>
+
+ $(document).ready(function(){
+
+   VF = Vex.Flow;
+
+	// Create an SVG renderer and attach it to the DIV element named "boo".
+	var div = document.getElementById("boo")
+	var renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
+
+	// Configure the rendering context.
+	renderer.resize(500, 500);
+	var context = renderer.getContext();
+	context.setFont("Arial", 10, "").setBackgroundFillStyle("#eed");
+
+	// Create a stave of width 400 at position 10, 40 on the canvas.
+	var stave = new VF.Stave(10, 40, 400);
+
+	// Add a clef and time signature.
+	stave.addClef("treble").addTimeSignature("4/4");
+
+	// Connect it to the rendering context and draw!
+	stave.setContext(context).draw();
+
+});
+
+</script>
+</head>
+
+<body>
+	<button id="generate">Generate Random Notes</button>
+	<div class="panel panel-default" id="boo"></div>
+</body>
