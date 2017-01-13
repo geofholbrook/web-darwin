@@ -70,8 +70,9 @@
 		var voice = new VF.Voice({num_beats: 4,  beat_value: 4});
 		voice.addTickables(notes);
 
-		// Format and justify the notes to 400 pixels.
-		
+		// Format and justify the notes to 750 pixels
+		var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 750);
+
 		return voice;
  		}
 
@@ -81,14 +82,19 @@
 
  		var voice = randVoice(16, "16");
 
+ 		var beams = VF.Beam.generateBeams(voice.tickables);
+
  		// erase SVG contents
 		$("svg").empty();
-
-		var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 750);
 
 		// draw elements
 		stave.draw();
 		voice.draw(context, stave);
+		// draw the damned beams (? not part of voice)
+		beams.forEach(function(beam) {
+  			beam.setContext(context).draw();
+		});
+
 
 	});
 
