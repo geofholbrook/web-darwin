@@ -11,7 +11,11 @@
   <script src="scripts/vexflow-min.js"></script>
 
 
+
+
 <script>
+
+
 
  $(document).ready(function(){
 
@@ -35,6 +39,54 @@
 	// Connect it to the rendering context and draw!
 	stave.setContext(context).draw();
 
+	// geof's code
+
+	 function newNote (keynum, dur) {
+
+ 	var oct = Math.floor( keynum / 12) - 1;
+ 	var pc = keynum % 12;
+
+ 	var notestr = VF.integerToNote(pc) + "/" + oct;
+    console.log(notestr);
+    
+ 	var note = new VF.StaveNote({clef: "treble", keys: [ notestr ], duration: dur });
+
+ 	return note;
+ 	}
+
+
+ 	function randVoice (len, dur) {
+
+ 		var notes = [];
+ 		for (i=0; i<len; i++) {
+ 			notes.push( newNote( Math.floor (Math.random() * 18) + 60, dur) );
+ 				}
+
+ 		// Create a voice in 4/4 and add above notes
+		var voice = new VF.Voice({num_beats: 4,  beat_value: 4});
+		voice.addTickables(notes);
+
+		// Format and justify the notes to 400 pixels.
+		var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
+
+		return voice;
+ 		}
+
+    
+
+ 	$("#generate").click( function () {
+
+ 		var voice = randVoice(4, "q");
+
+ 		// erase SVG contents
+		$("svg").empty();
+
+		// draw elements
+		stave.draw();
+		voice.draw(context, stave);
+
+	});
+
 });
 
 </script>
@@ -42,5 +94,9 @@
 
 <body>
 	<button id="generate">Generate Random Notes</button>
+	<button id="clear">clear</button>
+	<button id="draw">draw</button>
+
 	<div class="panel panel-default" id="boo"></div>
+
 </body>
