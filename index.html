@@ -8,16 +8,24 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
   <script src="scripts/vexflow-min.js"></script>
+
 
 
 
 
 <script>
 
+ 
+
+
 
 
  $(document).ready(function(){
+
+   $("#boo").draggable();
 
    VF = Vex.Flow;
 
@@ -104,8 +112,14 @@
 </head>
 
 <body>
-	<button id="generate">Generate Random Notes</button>
+	<div class="container">
+		<div class ="col-md-12 text-center">
 	
-	<div class="panel panel-default" id="boo"></div>
+			<h1>generating music with vexflow</h1>
+			<h3>building toward GA web app</h3>
 
+			<div class="panel panel-default" id="boo"></div>
+			<button class="btn btn-primary" id="generate">Generate Random Specimen</button>
+		</div>
+	</div>
 </body>
