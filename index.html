@@ -11,10 +11,7 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
   <script src="scripts/vexflow-min.js"></script>
-
-
-
-
+  <script src="scripts/js-darwin.js"></script>
 
 <script>
 
@@ -28,6 +25,7 @@
    $("#boo").draggable();
 
    VF = Vex.Flow;
+   Sp = new Specimen(16, [60, 75]);
 
 	// Create an SVG renderer and attach it to the DIV element named "boo".
 	var div = document.getElementById("boo")
@@ -47,15 +45,14 @@
 	// Connect it to the rendering context and draw!
 	stave.setContext(context).draw();
 
-	// geof's code
+    /////
 
-	 function newNote (keynum, dur) {
+	function newNote (keynum, dur) {
 
  	var oct = Math.floor( keynum / 12) - 1;
  	var pc = keynum % 12;
 
  	var notestr = VF.integerToNote(pc) + "/" + oct;
-    //console.log(notestr);
     
  	var note = new VF.StaveNote({clef: "treble", keys: [ notestr ], duration: dur });
 
@@ -67,12 +64,9 @@
  	}
 
 
- 	function randVoice (len, dur) {
+ 	function voice_from_specimen (spec, dur) {
 
- 		var notes = [];
- 		for (i=0; i<len; i++) {
- 			notes.push( newNote( Math.floor (Math.random() * 18) + 60, dur) );
- 				}
+ 		var notes = spec.nucl.map( function(item) { return newNote( item, dur )} );
 
  		// Create a voice in 4/4 and add above notes
 		var voice = new VF.Voice({num_beats: 4,  beat_value: 4});
@@ -85,10 +79,9 @@
  		}
 
     
-
- 	$("#generate").click( function () {
-
- 		var voice = randVoice(16, "16");
+ 	function redraw_music()
+ 	{
+ 		var voice = voice_from_specimen(Sp, "16");
 
  		var beams = VF.Beam.generateBeams(voice.tickables);
 
@@ -102,9 +95,22 @@
 		beams.forEach(function(beam) {
   			beam.setContext(context).draw();
 		});
+ 	}
 
+ 	$("#generate").click( function () {
+
+ 		Sp.randomize();
+ 		redraw_music();
+ 		
+	});
+
+	$("#mutate").click( function () {
+		Sp.mutate();
+		redraw_music();
 
 	});
+
+
 
 });
 
@@ -119,7 +125,10 @@
 			<h3>building toward GA web app</h3>
 
 			<div class="panel panel-default" id="boo"></div>
-			<button class="btn btn-primary" id="generate">Generate Random Specimen</button>
+			<div class="btn-group btn-group-justified">
+				<div class="btn btn-primary" id="generate">Generate Random Specimen</div>
+				<div class="btn btn-primary" id="mutate">Mutate Specimen</div>
+			</div>
 
 			<h3>some buttons that don't do anything yet</h3>
 
