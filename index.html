@@ -10,14 +10,18 @@
 
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-  <script src="scripts/vexflow-min.js"></script>
+  <script src="scripts/vexflow-debug.js"></script>
   <script src="scripts/js-darwin.js"></script>
 
+  <style>
+
+  svg {
+  	width: 100%;
+  }
+
+  </style>
+
 <script>
-
- 
-
-
 
 
  $(document).ready(function(){
@@ -35,10 +39,11 @@
 	renderer.resize(900, 200);
 	var context = renderer.getContext();
 	context.setFont("Arial", 10, "").setBackgroundFillStyle("#eed");
+    context.scale(1, 1);
 
 	// Create a stave of width 400 at position 10, 40 on the canvas.
-	var stave = new VF.Stave(10, 40, 800);
-
+	var stave = new VF.Stave(0, 40, 800);
+    
 	// Add a clef and time signature.
 	stave.addClef("treble").addTimeSignature("4/4");
 
@@ -110,7 +115,7 @@
 
 	});
 
-
+    $("")
 
 });
 
