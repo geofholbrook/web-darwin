@@ -11,9 +11,14 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
   <script src="scripts/vexflow-debug.js"></script>
+
+  <script src="scripts/geof.js"></script>
+
   <script src="scripts/js-darwin.js"></script>
   <script src="scripts/soundfont-player.min.js"></script>
   <script src="scripts/playback.js"></script>
+
+
 
   <style>
 
@@ -28,11 +33,11 @@
 
  $(document).ready(function(){
 
-   $("#boo").draggable();
+   // $("#boo").draggable();
 
    VF = Vex.Flow;
-   Sp = new Specimen(16, [60, 75]);
 
+   
 	// Create an SVG renderer and attach it to the DIV element named "boo".
 	var div = document.getElementById("boo")
 	var renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
@@ -43,8 +48,8 @@
 	context.setFont("Arial", 10, "").setBackgroundFillStyle("#eed");
     context.scale(1, 1);
 
-	// Create a stave of width 400 at position 10, 40 on the canvas.
-	var stave = new VF.Stave(0, 40, 800);
+	// Create a stave of width 899 at position 10, 40 on the canvas.
+	var stave = new VF.Stave(0, 40, 899);
     
 	// Add a clef and time signature.
 	stave.addClef("treble").addTimeSignature("4/4");
@@ -54,20 +59,32 @@
 
     /////
 
+    pop = new Population(10, 10, new Specimen(16, [60, 75]) );
+    engine = new Engine(pop);
+
+    link_GA_objects(engine);
+    pop.specimens.map(function(s) { s.evaluate() });
+
+    current = Gf.copy( pop.specimens[0] ); /// not necessarily the best one
+    current.evaluate();
+
+    redraw_music();
+
+
 	function newNote (keynum, dur) {
 
- 	var oct = Math.floor( keynum / 12) - 1;
- 	var pc = keynum % 12;
+	 	var oct = Math.floor( keynum / 12) - 1;
+	 	var pc = keynum % 12;
 
- 	var notestr = VF.integerToNote(pc) + "/" + oct;
-    
- 	var note = new VF.StaveNote({clef: "treble", keys: [ notestr ], duration: dur });
+	 	var notestr = VF.integerToNote(pc) + "/" + oct;
+	    
+	 	var note = new VF.StaveNote({clef: "treble", keys: [ notestr ], duration: dur });
 
-    if ( [1, 3, 6, 8, 10].indexOf(pc) != -1) { /// is a black note (always sharp)
-    	note.addAccidental(0, new VF.Accidental("#"));
-    }
+	    if ( [1, 3, 6, 8, 10].indexOf(pc) != -1) { /// is a black note (always sharp)
+	    	note.addAccidental(0, new VF.Accidental("#"));
+	    }
 
- 	return note;
+	 	return note;
  	}
 
 
@@ -83,12 +100,12 @@
 		var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 750);
 
 		return voice;
- 		}
+ 	}
 
     
  	function redraw_music()
  	{
- 		var voice = voice_from_specimen(Sp, "16");
+ 		var voice = voice_from_specimen(current, "16");
 
  		var beams = VF.Beam.generateBeams(voice.tickables);
 
@@ -102,27 +119,43 @@
 		beams.forEach(function(beam) {
   			beam.setContext(context).draw();
 		});
+
+		$("#fitness_disp").text( current.evaluate().fitness.toFixed(3) );
  	}
 
- 	$("#generate").click( function () {
+ 	$("#randomize").click( function () {
 
- 		Sp.randomize();
+ 		pop.randomize();
+ 		link_GA_objects(engine);
+        pop.specimens.map(function(s) { s.evaluate() });
+        
+ 		current = Gf.copy( pop.specimens[0] );
  		redraw_music();
 
- 		$("#fitness_disp").text( Sp.evaluate().toFixed(3) );
- 		
 	});
 
 	$("#mutate").click( function () {
-		Sp.mutate();
+		current.mutate();
 		redraw_music();
-
-		$("#fitness_disp").text( Sp.evaluate().toFixed(3) );
 
 	});
 
+
+	$("#iterate").click( function () {
+		// should be a separate process?
+
+		// test: set disply to random specimen
+		// current = pop.specimens[ Gf.rrnd (0, pop.specimens.length - 1) ];
+
+		engine.iterate();
+		current = Gf.copy( pop.specimens[0] );
+		redraw_music();
+
+	});
+
+
 	$("#play").click( function () {
-		schedule(Sp.nucl);
+		schedule(current.nucl);
 
 	});
 
@@ -131,7 +164,8 @@
 
 	});
 
-    $("")
+	// convenient breakpoint for js console
+    $("");
 
 });
 
@@ -142,20 +176,20 @@
 	<div class="container">
 		<div class ="text-center">
 	
-			<h1>generating music with vexflow</h1>
-			<h3>building toward GA web app</h3>
+			<h1>quick genetic algorithm</h1>
+			<h3>with canned fitness function (all black notes)</h3>
 
 			<div class="panel panel-default" id="boo"></div>
 			<div class="btn-group">
-				<div class="btn btn-primary" id="generate">Generate Random Specimen</div>
+				<div class="btn btn-primary" id="randomize">Randomize Population</div>
 				<div class="btn btn-primary" id="mutate">Mutate Specimen</div>
+				<div class="btn btn-primary" id="iterate">Iterate</div>
 				<div class="btn btn-primary" id="play">Play</div>
 				<div class="btn btn-primary" id="stop">Stop</div>
 			</div>
 
 
-			<h3>fitness with canned criterion (all black notes):
-			<h2 id="fitness_disp">_</h2>
+			<h3>fitness:<div id="fitness_disp">_</div></h3>
 
 			<h3>some buttons that don't do anything yet:</h3>
 
