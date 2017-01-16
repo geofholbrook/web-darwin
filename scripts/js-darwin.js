@@ -17,6 +17,10 @@ function Specimen (len, range) {
 	this.len = len;
 
 	this.nucl = [];
+	this.fitness = -1;
+	// -1 is a placeholder (not evaluated yet)
+	// lower fitness value means better specimen
+	// 0 means perfect
 }
 
 Specimen.prototype.mutate = function() {
@@ -35,3 +39,39 @@ Specimen.prototype.randomize = function() {
 	}
 
 }
+
+Specimen.prototype.evaluate = function() {
+	fit = 0;
+	nucl = this.nucl;
+
+	for (i in nucl) {
+		if ([1,3,6,8,10].indexOf(this.nucl[i] % 12) == -1)
+			{ fit += 0.1; }
+	}
+
+	this.fitness = fit;
+	return fit;
+	}
+
+function Population (capacity, fecundity, model) {
+	this.capacity = capacity;
+	this.fecundity = fecundity;
+	this.model = model;
+
+	this.specimens = [];
+
+	for (k=0;k<capacity;k++) {
+		this.specimens.push( 
+			new Specimen( model.len, model.range ) )
+	}
+}
+
+Population.prototype.iterate = function() {
+
+}
+
+
+
+
+
+

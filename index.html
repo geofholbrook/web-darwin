@@ -108,6 +108,8 @@
 
  		Sp.randomize();
  		redraw_music();
+
+ 		$("#fitness_disp").text( Sp.evaluate().toFixed(3) );
  		
 	});
 
@@ -149,7 +151,11 @@
 				<div class="btn btn-primary" id="stop">Stop</div>
 			</div>
 
-			<h3>some buttons that don't do anything yet</h3>
+
+			<h3>fitness with canned criterion (all black notes):
+			<h2 id="fitness_disp">_</h2>
+
+			<h3>some buttons that don't do anything yet:</h3>
 
 	<div class="btn-group btn-group-justified">
   <a href="#" class="btn .btn-info">Export MusicXML</a>

@@ -8,7 +8,7 @@ count=0;
 
 
 
-Soundfont.instrument(ac, 'english_horn').then(function (player){
+Soundfont.instrument(ac, 'acoustic_grand_piano').then(function (player){
 	voice = player;
 	loaded=true;
 })
