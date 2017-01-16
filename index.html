@@ -12,6 +12,8 @@
 
   <script src="scripts/vexflow-debug.js"></script>
   <script src="scripts/js-darwin.js"></script>
+  <script src="scripts/soundfont-player.min.js"></script>
+  <script src="scripts/playback.js"></script>
 
   <style>
 
@@ -115,6 +117,16 @@
 
 	});
 
+	$("#play").click( function () {
+		schedule(Sp.nucl);
+
+	});
+
+	$("#stop").click( function () {
+		clearSchedule();
+
+	});
+
     $("")
 
 });
@@ -133,6 +145,8 @@
 			<div class="btn-group">
 				<div class="btn btn-primary" id="generate">Generate Random Specimen</div>
 				<div class="btn btn-primary" id="mutate">Mutate Specimen</div>
+				<div class="btn btn-primary" id="play">Play</div>
+				<div class="btn btn-primary" id="stop">Stop</div>
 			</div>
 
 			<h3>some buttons that don't do anything yet</h3>
