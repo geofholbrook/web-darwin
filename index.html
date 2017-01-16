@@ -117,6 +117,8 @@
 		Sp.mutate();
 		redraw_music();
 
+		$("#fitness_disp").text( Sp.evaluate().toFixed(3) );
+
 	});
 
 	$("#play").click( function () {
@@ -163,7 +165,7 @@
   <a href="#" class="btn .btn-info">Stop GA</a>
 </div>
 
-		</div>
+	</div>
 	</div>
 
 
