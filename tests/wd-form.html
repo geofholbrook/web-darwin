@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script>
+
+ $(document).ready(function(){
+
+ var criteria = ['pitch', 'melodic', 'harmonic'];
+
+ $.each(criteria, function (k) {
+ 	$('#criterion_selector').append($('<option>', {
+ 								value: criteria[k],
+ 								text:  criteria[k]
+ 							}));
+ 	})
+
+ });
+
+  // get selectpicker
+
+
+</script>
+</head>
+
+
+<body>
+
+	<form class="form-inline">
+		<select class="selectpicker"</select>
+		class: <input id="class" type="checkbox"></input>
+		signed: <input id="signed" type="checkbox"></input>
+		<span id="valueprompt">pitch</span> range: <input type="text" id="value">
+	</form>
+</body>
+
