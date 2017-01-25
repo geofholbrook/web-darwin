@@ -26,6 +26,20 @@
   	width: 100%;
   }
 
+  .form-inline {
+  	background-color: #eee;
+  	margin-bottom: 5px;
+  }
+
+  .form-inline > label {
+  	margin-top: 5px;
+  }
+  .form-inline label {
+   margin-right: 10px;
+  }
+
+  .form-inline input[type=text] { text-align:center }
+
   </style>
 
 <script>
@@ -69,6 +83,15 @@
     current.evaluate();
 
     redraw_music();
+
+    var criterion_types = ['pitch', 'melodic', 'harmonic'];
+
+	 $.each(criterion_types, function (k) {
+	 	$('#crit_template #criterion_selector').append($('<option>', {
+	 								value: criterion_types[k],
+	 								text:  criterion_types[k]
+	 							}));
+	 	})
 
 
 	function newNote (keynum, dur) {
@@ -164,6 +187,15 @@
 
 	});
 
+    var num_criteria = 0;
+
+	$("#add-crit").click( function () {
+		num_criteria++;
+		var new_crit = $('#crit_template').clone();
+		new_crit.attr('id','crit'+num_criteria)
+		.appendTo('#criteria').show();
+	});
+
 	// convenient breakpoint for js console
     $("");
 
@@ -191,16 +223,35 @@
 
 			<h3>fitness:<div id="fitness_disp">_</div></h3>
 
+			<h2>criteria <span style='color:lightgrey'>(they do nothing)</span></h2>
+			<p><div class="btn btn-primary" id="add-crit">add criterion</div></p>
+			<div id="criteria"></div>
+
 			<h3>some buttons that don't do anything yet:</h3>
 
-	<div class="btn-group btn-group-justified">
-  <a href="#" class="btn .btn-info">Export MusicXML</a>
-  <a href="#" class="btn .btn-info">Start GA</a>
-  <a href="#" class="btn .btn-info">Stop GA</a>
-</div>
+		<div class="btn-group btn-group-justified">
+		  <a href="#" class="btn .btn-info">Export MusicXML</a>
+		  <a href="#" class="btn .btn-info">Start GA</a>
+		  <a href="#" class="btn .btn-info">Stop GA</a>
+		</div>
 
 	</div>
-	</div>
 
+	<form id="crit_template" class="form-inline" action="javascript:void(0);" style="display:none">
+			<label for="criterion_selector"><select id="criterion_selector" class="form-control"></select></label>
+
+			<label for="class">class <input id="class" type="checkbox"></input></label>
+			<label for="signed">signed <input id="signed" type="checkbox"></input></label>
+
+			<label for="value">value <input type="text" id="value"></input></label>
+			
+			<button type="button" class="btn btn-danger btn-sm" id="row-remove-crit">
+                <span class="glyphicon glyphicon-minus"></span>
+            </button>
+	        
+	        <button type="button" class="btn btn-success btn-sm" id="row-add-crit">
+	            <span class="glyphicon glyphicon-plus"></span>
+	        </button>    
+	</form>
 
 </body>

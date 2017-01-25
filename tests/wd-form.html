@@ -27,16 +27,30 @@
 
 
 </script>
+
+<style>
+
+.form-inline label {
+   margin-right: 10px;
+}
+
+input[type=text] { text-align:center }
+
+</style>
+
 </head>
 
 
 <body>
 
-	<form class="form-inline">
-		<select class="selectpicker"</select>
-		class: <input id="class" type="checkbox"></input>
-		signed: <input id="signed" type="checkbox"></input>
-		<span id="valueprompt">pitch</span> range: <input type="text" id="value">
+	<form class="form-inline" action="javascript:void(0);">
+			<label for="criterion_selector"><select id="criterion_selector" class="form-control"></select></label>
+
+			<label for="class">class <input id="class" type="checkbox"></input></label>
+			<label for="signed">signed <input id="signed" type="checkbox"></input></label>
+
+			<label for="value">value <input type="text" id="value"></input></label>
+
 	</form>
 </body>
 
