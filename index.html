@@ -4,21 +4,24 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
   <script src="scripts/vexflow-debug.js"></script>
 
   <script src="scripts/geof.js"></script>
 
   <script src="scripts/js-darwin.js"></script>
+  <script src="scripts/dwn-criteria.js"></script>
+  
   <script src="scripts/soundfont-player.min.js"></script>
   <script src="scripts/playback.js"></script>
-
-
 
   <style>
 
@@ -40,6 +43,10 @@
 
   .form-inline input[type=text] { text-align:center }
 
+  .row-ident {
+  	float: left;
+  }
+
   </style>
 
 <script>
@@ -49,9 +56,8 @@
 
    // $("#boo").draggable();
 
-   VF = Vex.Flow;
+    VF = Vex.Flow;
 
-   
 	// Create an SVG renderer and attach it to the DIV element named "boo".
 	var div = document.getElementById("boo")
 	var renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
@@ -95,6 +101,33 @@
 
 
     $("#criteria").sortable();
+
+
+
+    var crit_form_tmp = $("#crit_template").clone();
+    crit_form_tmp.find("input, select").change( function() { console.log("change") } );
+    crit_form_tmp.find("#row-add-crit").click( add_crit );
+
+
+
+    criteria = [];
+
+
+    function add_crit () {
+
+    	var spot = criteria.length;
+
+    	criteria.push( new Criterion ( "pitch", false, false, null, 1.0 ));
+
+		var new_crit_form = crit_form_tmp.clone(true);
+
+		new_crit_form.attr('id','crit'+spot)
+		.appendTo('#criteria')
+		.show();
+	}
+
+
+
 
 	function newNote (keynum, dur) {
 
@@ -191,12 +224,7 @@
 
     var num_criteria = 0;
 
-	$("#add-crit").click( function () {
-		num_criteria++;
-		var new_crit = $('#crit_template').clone();
-		new_crit.attr('id','crit'+num_criteria)
-		.appendTo('#criteria').show();
-	});
+	$("#add-crit").click( add_crit );
 
 	// convenient breakpoint for js console
     $("");

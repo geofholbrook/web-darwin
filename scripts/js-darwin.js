@@ -48,10 +48,10 @@ Specimen.prototype.randomize = function() {
 
 Specimen.prototype.evaluate = function() {
 
-	var x = this.nucl; 
 	if (this.engine) {
-		this.fitness = this.engine.eval_func(x);
+		this.fitness = this.engine.eval_func(this.nucl);
 	}
+	
 	else
 		{ this.fitness = -1; }
 	
