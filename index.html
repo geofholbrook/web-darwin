@@ -37,14 +37,23 @@
   .form-inline > label {
   	margin-top: 5px;
   }
+
   .form-inline label {
    margin-right: 10px;
   }
 
   .form-inline input[type=text] { text-align:center }
 
+  #row-add-crit, #row-remove-crit {
+  	float: right;
+  	margin-top: 8px;
+  	margin-right: 5px;
+  }
+
   .row-ident {
   	float: left;
+  	margin-top: 10px !important;
+  	margin-left:5px;
   }
 
   </style>
@@ -120,6 +129,7 @@
     	criteria.push( new Criterion ( "pitch", false, false, null, 1.0 ));
 
 		var new_crit_form = crit_form_tmp.clone(true);
+		new_crit_form.find(".row-ident").html(spot);
 
 		new_crit_form.attr('id','crit'+spot)
 		.appendTo('#criteria')
@@ -267,21 +277,32 @@
 
 	</div>
 
-	<form id="crit_template" class="form-inline" action="javascript:void(0);" style="display:none">
-			<label for="criterion_selector"><select id="criterion_selector" class="form-control"></select></label>
+	<div id="crit_template" style="display:none">
 
-			<label for="class">class <input id="class" type="checkbox"></input></label>
-			<label for="signed">signed <input id="signed" type="checkbox"></input></label>
 
-			<label for="value">value <input type="text" id="value"></input></label>
-			
-			<button type="button" class="btn btn-danger btn-sm" id="row-remove-crit">
-                <span class="glyphicon glyphicon-minus"></span>
-            </button>
-	        
-	        <button type="button" class="btn btn-success btn-sm" id="row-add-crit">
-	            <span class="glyphicon glyphicon-plus"></span>
-	        </button>    
-	</form>
+
+		<form class="form-inline" action="javascript:void(0);" >
+
+			<label class="row-ident">hello</label>
+
+				<label for="criterion_selector"><select id="criterion_selector" class="form-control"></select></label>
+
+				<label for="class">class <input id="class" type="checkbox"></input></label>
+				<label for="signed">signed <input id="signed" type="checkbox"></input></label>
+
+				<label for="value">value <input type="text" id="value"></input></label>
+		
+        <button type="button" class="btn btn-success btn-sm" id="row-add-crit">
+            <span class="glyphicon glyphicon-plus"></span>
+        </button> 
+
+		<button type="button" class="btn btn-danger btn-sm" id="row-remove-crit">
+            <span class="glyphicon glyphicon-minus"></span>
+        </button>
+   
+		
+        </form>
+
+	</div>
 
 </body>
