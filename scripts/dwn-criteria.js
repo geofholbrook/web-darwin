@@ -31,18 +31,17 @@ function offby (num, value) {
 	
 	/// this doesn't work!
 	
-	if (isObject(value)) {
-		offby_range (num, value.min, value.max)
-	}
-	else if (isArray(value)) {
+	if (Array.isArray(value)) {
 		value.indexOf(num) == -1 ? 1 : 0;
+	}
+	else if (value === Object(value)) {
+		offby_range (num, value.min, value.max)
 	}
 	else if (isNumber(value)) {
 		Math.abs( num - value )
 	}
 	else error ("offby: bad value argument.");
 }
-
 
 function Criterion (kind, classed, use_signed, val, freq)
 {
@@ -55,8 +54,35 @@ function Criterion (kind, classed, use_signed, val, freq)
 	/// for now the criterion acts on an array of numbers.
 }
 
+function default_crit() {
+	var dc = new Criterion("melodic", false, true, null, 1);
+	return dc;
+}
+
 function eval_crit (pheno, crit) {
+}
+
+// i'm going to start putting the web-specific stuff in here
+
+function update_from_data (elt) {
+	var ref = elt.data("crit");
+
+	elt.find("#kind").val(ref.kind);
+	elt.find("#classed").prop("checked", ref.classed);
+	elt.find("#signed").prop("checked", ref.signed);
+	elt.find("#val").val(ref.val);
+	elt.find("#freq").val(ref.freq * 100);
 
 }
+
+
+
+
+
+
+
+
+
+
 
 

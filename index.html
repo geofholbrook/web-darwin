@@ -99,25 +99,21 @@
 
     redraw_music();
 
-    var criterion_types = ['pitch', 'melodic', 'harmonic'];
+    var criterion_kinds = ['pitch', 'melodic', 'harmonic'];
 
-	 $.each(criterion_types, function (k) {
-	 	$('#crit_template #criterion_selector').append($('<option>', {
-	 								value: criterion_types[k],
-	 								text:  criterion_types[k]
+	 $.each(criterion_kinds, function (k) {
+	 	$('#crit_template #kind').append($('<option>', {
+	 								value: criterion_kinds[k],
+	 								text:  criterion_kinds[k]
 	 							}));
 	 	})
 
 
     $("#criteria").sortable();
 
-
-
     var crit_form_tmp = $("#crit_template").clone();
 
     crit_form_tmp.find("input, select").change( function() { console.log("change") } );
-
-    criteria = [];
 
     crit_id_counter = 0;
 
@@ -131,7 +127,11 @@
 
     	var new_crit_form = crit_form_tmp.clone(true);
 		new_crit_form.find(".row-ident").html(crit_id_counter);
-		
+
+		new_crit_form.data("crit", default_crit());
+
+		update_from_data(new_crit_form);
+
 		return new_crit_form;
     }
 
@@ -213,14 +213,12 @@
 	$("#mutate").click( function () {
 		current.mutate();
 		redraw_music();
-
 	});
 
 
 	$("#iterate").click( function () {
-		// should be a separate process?
 
-		// test: set disply to random specimen
+		// test: set display to random specimen
 		// current = pop.specimens[ Gf.rrnd (0, pop.specimens.length - 1) ];
 
 		engine.iterate();
@@ -229,24 +227,16 @@
 
 	});
 
+    $("#criteria").append(make_crit().show());
 
+	// playback 
 	$("#play").click( function () {
 		schedule(current.nucl);
-
 	});
 
 	$("#stop").click( function () {
 		clearSchedule();
-
 	});
-
-    var num_criteria = 0;
-    $("#criteria").append(make_crit().show());
-
-    // the old button
-	// $("#add-crit").click( add_crit );
-
-
 
 	// convenient breakpoint for js console
     $("");
@@ -292,18 +282,17 @@
 
 	<div id="crit_template" style="display:none">
 
-
-
 		<form class="form-inline" action="javascript:void(0);" >
 
 			<label class="row-ident">hello</label>
 
-				<label for="criterion_selector"><select id="criterion_selector" class="form-control"></select></label>
+				<label for="kind"><select id="kind" class="form-control"></select></label>
 
-				<label for="class">class <input id="class" type="checkbox"></input></label>
+				<label for="classed">class <input id="classed" type="checkbox"></input></label>
 				<label for="signed">signed <input id="signed" type="checkbox"></input></label>
 
-				<label for="value">value <input type="text" id="value"></input></label>
+				<label for="val">value <input type="text" id="val"></input></label>
+				<label for="freq">freq <input type="number" id="freq" min="0" max="100" step="1"/></input></label>
 		
         <button type="button" class="btn btn-success btn-sm" id="row-add-crit">
             <span class="glyphicon glyphicon-plus"></span>
