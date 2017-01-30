@@ -114,27 +114,35 @@
 
 
     var crit_form_tmp = $("#crit_template").clone();
+
     crit_form_tmp.find("input, select").change( function() { console.log("change") } );
-    crit_form_tmp.find("#row-add-crit").click( add_crit );
-
-
 
     criteria = [];
 
+    crit_id_counter = 0;
 
-    function add_crit () {
+    function num_crit () {
+    	$("#criteria div".length())
+    };
 
-    	var spot = criteria.length;
+    function make_crit () {
 
-    	criteria.push( new Criterion ( "pitch", false, false, null, 1.0 ));
+    	crit_id_counter++;
 
-		var new_crit_form = crit_form_tmp.clone(true);
-		new_crit_form.find(".row-ident").html(spot);
+    	var new_crit_form = crit_form_tmp.clone(true);
+		new_crit_form.find(".row-ident").html(crit_id_counter);
+		
+		return new_crit_form;
+    }
 
-		new_crit_form.attr('id','crit'+spot)
-		.appendTo('#criteria')
-		.show();
-	}
+    // add functions to +/- buttons
+	crit_form_tmp.find("#row-add-crit").click( function() {
+ 		$(this).closest("div").after( make_crit().show() );
+    });
+
+    crit_form_tmp.find("#row-remove-crit").click( function () {
+    	$(this).closest("div").remove();
+    });
 
 
 
@@ -233,8 +241,12 @@
 	});
 
     var num_criteria = 0;
+    $("#criteria").append(make_crit().show());
 
-	$("#add-crit").click( add_crit );
+    // the old button
+	// $("#add-crit").click( add_crit );
+
+
 
 	// convenient breakpoint for js console
     $("");
@@ -264,7 +276,8 @@
 			<h3>fitness:<div id="fitness_disp">_</div></h3>
 
 			<h2>criteria <span style='color:lightgrey'>(they do nothing)</span></h2>
-			<p><div class="btn btn-primary" id="add-crit">add criterion</div></p>
+			
+			<p><div class="btn btn-primary" id="add-crit" style="display:none">add criterion</div></p>
 			<div id="criteria"></div>
 
 			<h3>some buttons that don't do anything yet:</h3>
