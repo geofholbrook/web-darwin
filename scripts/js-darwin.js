@@ -9,6 +9,13 @@ function range_modulo (num, range) {
 	return (num - min) % (max-min+1) + min;
 }
 
+function choose_other (num, range) {
+	var min = range[0];
+	var max = range[1];
+
+	return range_modulo (num + Gf.rrnd(1, (max-min)), range);	
+}
+
 function Specimen (len, range) {
 
 	this.range = range;
@@ -28,9 +35,9 @@ function Specimen (len, range) {
 
 Specimen.prototype.mutate = function() {
 	var spot = Gf.rrnd(0, this.len - 1);
-	var delta = Gf.rrnd(0,1) * 2 - 1;
+	// var delta = Gf.rrnd(0,1) * 2 - 1;
 
-	this.nucl[spot] = range_modulo(this.nucl[spot] + delta, this.range);
+	this.nucl[spot] = choose_other(this.nucl[spot], this.range);
 
 	return this;
 }
@@ -48,14 +55,23 @@ Specimen.prototype.randomize = function() {
 
 Specimen.prototype.evaluate = function() {
 
-	if (this.engine) {
-		this.fitness = this.engine.eval_func(this.nucl);
+	//console.log( "evaluate()" );
+
+	var spec = this; // because jQuery (?!)
+
+	if (spec.engine) {
+		spec.fitness = 
+		//console.log(
+		spec.engine.criteria
+		.map( function (c) { return eval_crit (spec.nucl, c) } )
+		.reduce( Gf.add ) 
+		// )
 	}
 	
 	else
-		{ this.fitness = -1; }
+		{ spec.fitness = -1; }
 	
-	return this;
+	return spec;
 }
 
 function Population (capacity, litter_size, model) {
@@ -90,28 +106,21 @@ Population.prototype.best = function() {
 function Engine (population) {
 	this.population = population;
 
-	this.eval_func = function (x) {
-
-			fit = 0;
-
-			for (i in x) {
-				if ([1,3,6,8,10].indexOf(x[i] % 12) == -1)
-					{ fit += 0.1; }
-			}
-			return fit;
-	}
+	this.criteria = [];
 
 	this.generation = 0;
 }
 
 Engine.prototype.iterate = function() {
 
-	console.log("iterating.");
+    // console.log("iterate()");
 
 	var new_copies = [];
 
 	for (i in this.population.specimens) {
 		var spec = this.population.specimens[i];
+
+		spec.evaluate();  // could be unnecessary
 
 		for (k=0;k<this.population.litter_size;k++) {
 		

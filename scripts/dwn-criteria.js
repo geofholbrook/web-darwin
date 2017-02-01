@@ -9,18 +9,18 @@ function offby (num, value) {
 	/// this doesn't work!
 	
 	if (Array.isArray(value)) {
-		value.indexOf(num) == -1 ? 1 : 0;
+		return value.indexOf(num) == -1 ? 1 : 0;
 	}
 	else if (value === Object(value)) {
-		offby_range (num, value.min, value.max)
+		return offby_range (num, value.min, value.max)
 	}
-	else if (isNumber(value)) {
-		Math.abs( num - value )
+	else if ($.isNumeric(value)) {
+		return Math.abs( num - value )
 	}
-	else error ("offby: bad value argument.");
+	else console.log ("offby: bad value argument.");
 }
 
-function Criterion (kind, classed, use_signed, val, freq)
+function Criterion (kind, classed, signed, val, freq)
 {
 	this.kind = kind;
 	this.classed = classed;
@@ -43,24 +43,31 @@ function default_crit() {
 
 function eval_crit (ph, crit) {
 	// hack version
-	sub_f = 0; // fitness component
 	keys = [];
 
-	for (i in ph) {
-		var key;
+	for (i=0;i<ph.length;i++) {
+
+		// console.log("eval_crit( [" + ph + "], crit)");
+
 		switch (crit.kind) {
 			case "pitch": 
-				key.push(ph[i]);
+				keys.push(ph[i]);
 				break;
 			case "melodic":
-				if (i<ph.length-1) key.push(ph[i+1]-ph[i]);
+				if (i<ph.length-1) { keys.push( ph[i+1] - ph[i]) }
 				break;
 		}
 	}
 
-	return
-	keys.map( function(k) { return offby(k, crit.value) } )
-	.reduce( function(a,b) { return a+b }) / keys.length;
+    // console.log(keys);
+
+	var result = keys.map( function(k) { if (crit.classed) k = k%12;
+										 if (!crit.signed) k = Math.abs(k);
+										 return offby(k, crit.val);
+										 } )
+	.reduce( Gf.add ) / keys.length;
+
+	return result;
 }
 
 // now some web-specific stuff :
@@ -91,7 +98,7 @@ function parse_value_str (str) {
 }
 
 function format_value_str (value) {
-	console.log(value);
+	// console.log(value);
 
 	if (value == null || typeof value === "undefined") { return null }
 	

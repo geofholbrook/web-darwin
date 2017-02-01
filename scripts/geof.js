@@ -12,5 +12,7 @@ Gf = {
 
 	rrnd: function (min, max) {
 		return Math.floor (Math.random() * (max - min + 1)) + min;
-	}
+	},
+
+	add: function (a,b) { return a+b }
 }

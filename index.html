@@ -25,8 +25,20 @@
 
   <style>
 
+
+
   svg {
   	width: 100%;
+  }
+
+  #boo {
+  	position:relative;
+  }
+
+  .transport {
+  	position:absolute;
+  	right:5px;
+  	top:5px;
   }
 
   .row-container {
@@ -64,7 +76,7 @@
 
   }
 
-  .row-ident {
+  .row-header {
   	position:absolute;
   	left:10px;
   	float: left;
@@ -103,17 +115,7 @@
 
     /////
 
-    pop = new Population(10, 10, new Specimen(16, [60, 75]) );
-    engine = new Engine(pop);
-
-    link_GA_objects(engine);
-    pop.specimens.map(function(s) { s.evaluate() });
-
-    current = Gf.copy( pop.specimens[0] ); /// not necessarily the best one
-    current.evaluate();
-
-    redraw_music();
-
+    
     var criterion_kinds = ['pitch', 'melodic', 'harmonic'];
 
 	 $.each(criterion_kinds, function (k) {
@@ -124,11 +126,14 @@
 	 	})
 
 
-    $("#criteria").sortable();
+    $("#criteria").sortable({ handle: ".drag-handle" });
 
     var crit_form_tmp = $("#crit_template").clone();
 
-    crit_form_tmp.find("input, select").change( function() { console.log("change") } );
+    crit_form_tmp.find("input, select").change( function() { 
+    	update_to_data( $(this).closest(".row-container") );
+    	update_engine();	 
+    });
 
     crit_id_counter = 0;
 
@@ -136,14 +141,16 @@
     	return $("#criteria div").length 
     };
 
-    function make_crit () {
+    function make_crit ( critObj ) {
+
+    	if (typeof critObj === "undefined") { critObj = blank_crit() }
 
     	crit_id_counter++;
 
     	var new_crit_form = crit_form_tmp.clone(true);
-		new_crit_form.find(".row-ident").html(crit_id_counter);
+		new_crit_form.find(".row-id").html(crit_id_counter);
 
-		new_crit_form.data("crit", default_crit());
+		new_crit_form.data("crit", critObj);
 
 		update_from_data(new_crit_form);
 
@@ -232,20 +239,37 @@
 	});
 
 
-	$("#iterate").click( function () {
+	function update_engine () {
+		engine.criteria = [];
 
-		// test: set display to random specimen
-		// current = pop.specimens[ Gf.rrnd (0, pop.specimens.length - 1) ];
+		$("#criteria .row-container").each (function (i) {
+			engine.criteria.push( $(this).data("crit") ) ;
+		});
+	}
+
+	function iterate_and_display() {
+		// update_engine();
 
 		engine.iterate();
-		current = Gf.copy( pop.specimens[0] );
+		if (current.fitness != 0) current = Gf.copy( pop.specimens[0] );
 		redraw_music();
+	}
 
+	$("#iterate").click( iterate_and_display );
+
+	var gaTimer;
+
+	$("#start-ga").click( function () {
+		update_engine();
+		gaTimer = setInterval( iterate_and_display, 50);
 	});
 
-    $("#criteria").append(make_crit().show());
+	$("#pause-ga").click( function () {
+		clearInterval(gaTimer);
+	});
 
-	// playback 
+
+		// playback 
 	$("#play").click( function () {
 		schedule(current.nucl);
 	});
@@ -253,6 +277,26 @@
 	$("#stop").click( function () {
 		clearSchedule();
 	});
+
+
+    $("#criteria").append( make_crit( default_crit() ).show());
+
+    engine = new Engine();
+    update_engine();
+
+    pop = new Population(10, 10, new Specimen(16, [60, 75]) );    
+    engine.population = pop;
+
+    link_GA_objects(engine);
+
+    pop.specimens.map( function(s) { s.evaluate() });
+
+    current = Gf.copy( pop.specimens[0] ); /// not necessarily the best one
+    current.evaluate();
+
+    redraw_music();
+
+
 
 	// convenient breakpoint for js console
     $("");
@@ -266,55 +310,63 @@
 	<div class="container">
 		<div class ="text-center">
 	
-			<h1>quick genetic algorithm</h1>
-			<h3>with canned fitness function (all black notes)</h3>
+			<h1>musical GA in development</h1>
+			
+			<div class="panel panel-default" id="boo">
+				<div class="transport">
+					<button type="button" class="btn btn-danger btn-sm" id="stop">
+		            	<span class="glyphicon glyphicon-stop"></span>
+		        	</button> 
+		        	<button type="button" class="btn btn-success btn-sm" id="play">
+		            	<span class="glyphicon glyphicon-play"></span>
+		        	</button>
+				</div>
+			</div>
 
-			<div class="panel panel-default" id="boo"></div>
+
 			<div class="btn-group">
 				<div class="btn btn-primary" id="randomize">Randomize Population</div>
 				<div class="btn btn-primary" id="mutate">Mutate Specimen</div>
 				<div class="btn btn-primary" id="iterate">Iterate</div>
-				<div class="btn btn-primary" id="play">Play</div>
-				<div class="btn btn-primary" id="stop">Stop</div>
+				<div class="btn btn-primary" id="start-ga">Run GA</div>
+				<div class="btn btn-primary" id="pause-ga">Pause GA</div>
+				
 			</div>
+
+
 
 
 			<h3>fitness:<div id="fitness_disp">_</div></h3>
 
-			<h2>criteria <span style='color:lightgrey'>(they do nothing)</span></h2>
+			<h2>criteria</h2>
 			
 			<p><div class="btn btn-primary" id="add-crit" style="display:none">add criterion</div></p>
 			<div id="criteria"></div>
-
-			<h3>some buttons that don't do anything yet:</h3>
-
-		<div class="btn-group btn-group-justified">
-		  <a href="#" class="btn .btn-info">Export MusicXML</a>
-		  <a href="#" class="btn .btn-info">Start GA</a>
-		  <a href="#" class="btn .btn-info">Stop GA</a>
-		</div>
-
 	</div>
 
 	<div id="crit_template" class="row-container" style="display:none">
 
+		<div class="row-header">
+			<span class="glyphicon glyphicon-align-justify drag-handle"><span>
+		    <span class="row-id"></span>
+		</div>
+
 		<form class="form-inline" action="javascript:void(0);" >
 
-			<label class="row-ident">hello</label>
-
+			
 				<label for="kind"><select id="kind" class="form-control"></select></label>
 
 				<label for="classed">class <input id="classed" type="checkbox"></input></label>
 				<label for="signed">signed <input id="signed" type="checkbox"></input></label>
 
 				<label for="val">value <input type="text" id="val"></input></label>
-				<label for="freq">freq <input type="number" id="freq" min="0" max="100" step="1"/></input></label>
+				<label for="freq">freq <input type="number" id="freq" min="0" max="100" step="5"/></input></label>
 		
         <span id="row-buttons">
-        	<button type="button" class="btn btn-danger btn-sm" id="row-remove-crit">
+        	<button type="button" class="btn btn-sm" id="row-remove-crit">
             	<span class="glyphicon glyphicon-minus"></span>
         	</button>
-        	<button type="button" class="btn btn-success btn-sm" id="row-add-crit">
+        	<button type="button" class="btn btn-info btn-sm" id="row-add-crit">
             	<span class="glyphicon glyphicon-plus"></span>
         	</button> 
 
