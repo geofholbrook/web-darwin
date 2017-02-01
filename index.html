@@ -29,9 +29,16 @@
   	width: 100%;
   }
 
-  .form-inline {
+  .row-container {
+  	position: relative;
   	background-color: #eee;
+  	
+  }
+
+  .form-inline {
   	margin-bottom: 5px;
+  	margin-left: 20px;
+  	margin-right: 60px;
   }
 
   .form-inline > label {
@@ -44,16 +51,24 @@
 
   .form-inline input[type=text] { text-align:center }
 
-  #row-add-crit, #row-remove-crit {
-  	float: right;
+  /*#row-add-crit, #row-remove-crit {
   	margin-top: 8px;
   	margin-right: 5px;
+  }*/
+
+  #row-buttons {
+  	position:absolute;
+  	right:5px;
+  	top:5px;
+  	float:right;
+
   }
 
   .row-ident {
+  	position:absolute;
+  	left:10px;
   	float: left;
   	margin-top: 10px !important;
-  	margin-left:5px;
   }
 
   </style>
@@ -118,7 +133,7 @@
     crit_id_counter = 0;
 
     function num_crit () {
-    	$("#criteria div".length())
+    	return $("#criteria div").length 
     };
 
     function make_crit () {
@@ -141,6 +156,7 @@
     });
 
     crit_form_tmp.find("#row-remove-crit").click( function () {
+    	if (num_crit()>1)
     	$(this).closest("div").remove();
     });
 
@@ -280,7 +296,7 @@
 
 	</div>
 
-	<div id="crit_template" style="display:none">
+	<div id="crit_template" class="row-container" style="display:none">
 
 		<form class="form-inline" action="javascript:void(0);" >
 
@@ -294,14 +310,16 @@
 				<label for="val">value <input type="text" id="val"></input></label>
 				<label for="freq">freq <input type="number" id="freq" min="0" max="100" step="1"/></input></label>
 		
-        <button type="button" class="btn btn-success btn-sm" id="row-add-crit">
-            <span class="glyphicon glyphicon-plus"></span>
-        </button> 
+        <span id="row-buttons">
+        	<button type="button" class="btn btn-danger btn-sm" id="row-remove-crit">
+            	<span class="glyphicon glyphicon-minus"></span>
+        	</button>
+        	<button type="button" class="btn btn-success btn-sm" id="row-add-crit">
+            	<span class="glyphicon glyphicon-plus"></span>
+        	</button> 
 
-		<button type="button" class="btn btn-danger btn-sm" id="row-remove-crit">
-            <span class="glyphicon glyphicon-minus"></span>
-        </button>
-   
+			
+   		</span>
 		
         </form>
 
