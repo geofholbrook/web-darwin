@@ -31,7 +31,7 @@
   	width: 100%;
   }
 
-  #boo {
+  #boo, .val-span {
   	position:relative;
   }
 
@@ -40,6 +40,18 @@
   	right:5px;
   	top:5px;
   }
+
+  .tiny-keybaord {
+  	position: absolute;
+  	right:15px;
+  	bottom:-2px;
+  }
+
+  #info_disp {
+  	max-width: 300px;
+  	margin: auto;
+  }
+
 
   .row-container {
   	position: relative;
@@ -116,8 +128,7 @@
     /////
 
     
-    var criterion_kinds = ['pitch', 'melodic', 'harmonic'];
-
+    
 	 $.each(criterion_kinds, function (k) {
 	 	$('#crit_template #kind').append($('<option>', {
 	 								value: criterion_kinds[k],
@@ -125,17 +136,18 @@
 	 							}));
 	 	})
 
+	crit_id_counter = 0;
 
     $("#criteria").sortable({ handle: ".drag-handle" });
 
     var crit_form_tmp = $("#crit_template").clone();
-
+   
     crit_form_tmp.find("input, select").change( function() { 
     	update_to_data( $(this).closest(".row-container") );
     	update_engine();	 
     });
 
-    crit_id_counter = 0;
+    
 
     function num_crit () {
     	return $("#criteria div").length 
@@ -147,8 +159,10 @@
 
     	crit_id_counter++;
 
-    	var new_crit_form = crit_form_tmp.clone(true);
-		new_crit_form.find(".row-id").html(crit_id_counter);
+    	var new_crit_form = crit_form_tmp.clone(true)
+    	 .attr("id", "crit-" + crit_id_counter);
+
+	    new_crit_form.find(".row-id").html(crit_id_counter);
 
 		new_crit_form.data("crit", critObj);
 
@@ -220,6 +234,7 @@
 		});
 
 		$("#fitness_disp").text( current.evaluate().fitness.toFixed(3) );
+		$("#generation_disp").text( current.engine.generation );
  	}
 
  	$("#randomize").click( function () {
@@ -248,25 +263,29 @@
 	}
 
 	function iterate_and_display() {
-		// update_engine();
-
-		engine.iterate();
-		if (current.fitness != 0) current = Gf.copy( pop.specimens[0] );
+	
+		if (current.fitness != 0) engine.iterate();
+		current = Gf.copy( pop.specimens[0] );
 		redraw_music();
+	
+	}
+
+	var gaTimer;
+
+	function pause_ga () { clearInterval(gaTimer) }
+
+	function start_ga() {
+		update_engine();
+		gaTimer = setInterval( iterate_and_display, 50);
 	}
 
 	$("#iterate").click( iterate_and_display );
 
-	var gaTimer;
+	
 
-	$("#start-ga").click( function () {
-		update_engine();
-		gaTimer = setInterval( iterate_and_display, 50);
-	});
+	$("#start-ga").click( start_ga );
 
-	$("#pause-ga").click( function () {
-		clearInterval(gaTimer);
-	});
+	$("#pause-ga").click( pause_ga );
 
 
 		// playback 
@@ -309,7 +328,6 @@
 <body>
 	<div class="container">
 		<div class ="text-center">
-	
 			<h1>musical GA in development</h1>
 			
 			<div class="panel panel-default" id="boo">
@@ -333,15 +351,18 @@
 				
 			</div>
 
-
-
-
-			<h3>fitness:<div id="fitness_disp">_</div></h3>
+			<dl class="dl-horizontal well" id="info_disp">
+				<dt>fitness</dt>
+				<dd id="fitness_disp">...</dd>
+				<dt>generation</dt>
+				<dd id="generation_disp">0</dd>
+			</dl>
 
 			<h2>criteria</h2>
 			
 			<p><div class="btn btn-primary" id="add-crit" style="display:none">add criterion</div></p>
 			<div id="criteria"></div>
+					
 	</div>
 
 	<div id="crit_template" class="row-container" style="display:none">
@@ -354,13 +375,17 @@
 		<form class="form-inline" action="javascript:void(0);" >
 
 			
-				<label for="kind"><select id="kind" class="form-control"></select></label>
+				<label for="kind"><select class="kind" class="form-control"></select></label>
 
-				<label for="classed">class <input id="classed" type="checkbox"></input></label>
-				<label for="signed">signed <input id="signed" type="checkbox"></input></label>
+				<label for="classed">class <input class="classed" type="checkbox"></input></label>
+				<label for="signed">signed <input class="signed" type="checkbox"></input></label>
 
-				<label for="val">value <input type="text" id="val"></input></label>
-				<label for="freq">freq <input type="number" id="freq" min="0" max="100" step="5"/></input></label>
+				<span class="val-span">
+					<label for="val">value <input type="text" class="val"></input></label>
+					<span><img class="tiny-keybaord" src="icons/piano.png" alt="image" width="20"></span>
+				</span>
+						
+				<label for="freq">freq <input type="number" class="freq" min="0" max="100" step="5"/></input></label>
 		
         <span id="row-buttons">
         	<button type="button" class="btn btn-sm" id="row-remove-crit">

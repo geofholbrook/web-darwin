@@ -1,5 +1,9 @@
 
 
+var criterion_kinds = ['pitch', 'pitch-class', 'melodic', 'melodic-abs', 'harmonic'];
+var comparison_kinds = ['is equal to', 'is not equal to', 'is greater than', 'is less than', 'is one of'];
+
+
 function offby_range (num, min, max) {
 	return Math.max( min-num, num-max, 0);
 }
@@ -43,31 +47,34 @@ function default_crit() {
 
 function eval_crit (ph, crit) {
 	// hack version
-	keys = [];
+	if (crit.val == null || typeof crit.val === "undefined") { return 0 } else
+	{
+		keys = [];
 
-	for (i=0;i<ph.length;i++) {
+		for (i=0;i<ph.length;i++) {
 
-		// console.log("eval_crit( [" + ph + "], crit)");
+			// console.log("eval_crit( [" + ph + "], crit)");
 
-		switch (crit.kind) {
-			case "pitch": 
-				keys.push(ph[i]);
-				break;
-			case "melodic":
-				if (i<ph.length-1) { keys.push( ph[i+1] - ph[i]) }
-				break;
+			switch (crit.kind) {
+				case "pitch": 
+					keys.push(ph[i]);
+					break;
+				case "melodic":
+					if (i<ph.length-1) { keys.push( ph[i+1] - ph[i]) }
+					break;
+			}
 		}
-	}
 
-    // console.log(keys);
+	    // console.log(keys);
 
-	var result = keys.map( function(k) { if (crit.classed) k = k%12;
-										 if (!crit.signed) k = Math.abs(k);
-										 return offby(k, crit.val);
-										 } )
-	.reduce( Gf.add ) / keys.length;
+		var result = keys.map( function(k) { if (crit.classed) k = k%12;
+											 if (!crit.signed) k = Math.abs(k);
+											 return offby(k, crit.val);
+											 } )
+		.reduce( Gf.add ) / keys.length;
 
-	return result;
+		return result;
+	}	
 }
 
 // now some web-specific stuff :
@@ -114,21 +121,21 @@ function format_value_str (value) {
 function update_from_data (elt) {
 	var ref = elt.data("crit");
 
-	elt.find("#kind").val(ref.kind);
-	elt.find("#classed").prop("checked", ref.classed);
-	elt.find("#signed").prop("checked", ref.signed);
-	elt.find("#val").val(format_value_str(ref.val));
-	elt.find("#freq").val(ref.freq * 100);
+	elt.find(".kind").val(ref.kind);
+	elt.find(".classed").prop("checked", ref.classed);
+	elt.find(".signed").prop("checked", ref.signed);
+	elt.find(".val").val(format_value_str(ref.val));
+	elt.find(".freq").val(ref.freq * 100);
 }
 
 function update_to_data (elt) {
 	var ref = elt.data("crit");
 
-	ref.kind = elt.find("#kind").val();
-	ref.classed = elt.find("#classed").prop("checked");
-	ref.signed = elt.find("#signed").prop("checked");
-	ref.val = parse_value_str( elt.find("#val").val() );
-	ref.freq = elt.find("#freq").val() / 100;
+	ref.kind = elt.find(".kind").val();
+	ref.classed = elt.find(".classed").prop("checked");
+	ref.signed = elt.find(".signed").prop("checked");
+	ref.val = parse_value_str( elt.find(".val").val() );
+	ref.freq = elt.find(".freq").val() / 100;
 }
 
 

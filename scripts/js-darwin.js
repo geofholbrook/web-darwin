@@ -133,6 +133,7 @@ Engine.prototype.iterate = function() {
 	this.population.specimens = this.population.specimens.sort(function(a,b) { return a.fitness - b.fitness } );
 	this.population.specimens.splice( this.population.capacity );
 
+	this.generation++;
 
 	return this.population.best(); // most fit specimen
 }
