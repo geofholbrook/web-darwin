@@ -130,7 +130,7 @@
     
     
 	 $.each(criterion_kinds, function (k) {
-	 	$('#crit_template #kind').append($('<option>', {
+	 	$('#crit_template .kind').append($('<option>', {
 	 								value: criterion_kinds[k],
 	 								text:  criterion_kinds[k]
 	 							}));
@@ -376,10 +376,7 @@
 
 			
 				<label for="kind"><select class="kind" class="form-control"></select></label>
-
-				<label for="classed">class <input class="classed" type="checkbox"></input></label>
-				<label for="signed">signed <input class="signed" type="checkbox"></input></label>
-
+				
 				<span class="val-span">
 					<label for="val">value <input type="text" class="val"></input></label>
 					<span><img class="tiny-keybaord" src="icons/piano.png" alt="image" width="20"></span>

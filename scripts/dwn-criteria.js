@@ -1,8 +1,7 @@
 
 
-var criterion_kinds = ['pitch', 'pitch-class', 'melodic', 'melodic-abs', 'harmonic'];
+var criterion_kinds = ['pitch', 'pitch-class', 'melodic-signed', 'melodic-abs', 'harmonic'];
 var comparison_kinds = ['is equal to', 'is not equal to', 'is greater than', 'is less than', 'is one of'];
-
 
 function offby_range (num, min, max) {
 	return Math.max( min-num, num-max, 0);
@@ -41,7 +40,7 @@ function blank_crit() {
 }
 
 function default_crit() {
-	var dc = new Criterion("pitch", true, true, [1,3,6,8,10], 1);
+	var dc = new Criterion("pitch-class", true, true, [1,3,6,8,10], 1);
 	return dc;
 }
 
@@ -59,7 +58,13 @@ function eval_crit (ph, crit) {
 				case "pitch": 
 					keys.push(ph[i]);
 					break;
-				case "melodic":
+				case "pitch-class": 
+					keys.push(ph[i] % 12);
+					break;
+				case "melodic-abs":
+					if (i<ph.length-1) { keys.push( Math.abs( ph[i+1] - ph[i]) )}
+					break;
+				case "melodic-signed":
 					if (i<ph.length-1) { keys.push( ph[i+1] - ph[i]) }
 					break;
 			}
@@ -67,9 +72,7 @@ function eval_crit (ph, crit) {
 
 	    // console.log(keys);
 
-		var result = keys.map( function(k) { if (crit.classed) k = k%12;
-											 if (!crit.signed) k = Math.abs(k);
-											 return offby(k, crit.val);
+		var result = keys.map( function(k) { return offby(k, crit.val);
 											 } )
 		.reduce( Gf.add ) / keys.length;
 
