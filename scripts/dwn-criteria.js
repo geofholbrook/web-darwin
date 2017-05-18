@@ -7,14 +7,15 @@ function offby_range (num, min, max) {
 	return Math.max( min-num, num-max, 0);
 }
 
+// returns a proximity, accepts numbers, ranges and arrays for "value"
 function offby (num, value) {
 	
-	/// this doesn't work!
-	
+	/// make sure this works ....
+
 	if (Array.isArray(value)) {
 		return value.indexOf(num) == -1 ? 1 : 0;
 	}
-	else if (value === Object(value)) {
+	else if (value === Object(value)) {    // means value must be a range Object
 		return offby_range (num, value.min, value.max)
 	}
 	else if ($.isNumeric(value)) {
@@ -50,6 +51,7 @@ function eval_crit (ph, crit) {
 	{
 		keys = [];
 
+		// collect values to be compared to the target value for crit
 		for (i=0;i<ph.length;i++) {
 
 			// console.log("eval_crit( [" + ph + "], crit)");
@@ -72,6 +74,7 @@ function eval_crit (ph, crit) {
 
 	    // console.log(keys);
 
+	    // average penalty (offby)
 		var result = keys.map( function(k) { return offby(k, crit.val);
 											 } )
 		.reduce( Gf.add ) / keys.length;
@@ -83,7 +86,7 @@ function eval_crit (ph, crit) {
 // now some web-specific stuff :
 
 function parse_value_str (str) {
-	// either a single number, a range "a..b" or a set {3, 5, 8, 10}
+	// either a single number, a range "a..b" or a set "3, 5, 8, 10"
 	var result;
 
     // range

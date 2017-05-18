@@ -240,6 +240,7 @@
  	$("#randomize").click( function () {
 
  		pop.randomize();
+ 		engine.generation = 0;
  		link_GA_objects(engine);
         pop.specimens.map(function(s) { s.evaluate() });
         
@@ -272,7 +273,7 @@
 
 	var gaTimer;
 
-	function pause_ga () { clearInterval(gaTimer) }
+	function pause_ga () { console.log("pause"); clearInterval(gaTimer) }
 
 	function start_ga() {
 		update_engine();
@@ -280,8 +281,6 @@
 	}
 
 	$("#iterate").click( iterate_and_display );
-
-	
 
 	$("#start-ga").click( start_ga );
 
@@ -303,7 +302,7 @@
     engine = new Engine();
     update_engine();
 
-    pop = new Population(10, 10, new Specimen(16, [60, 75]) );    
+    pop = new Population(10, 10, new Specimen(16, [55, 86]) );    
     engine.population = pop;
 
     link_GA_objects(engine);
@@ -362,6 +361,9 @@
 			
 			<p><div class="btn btn-primary" id="add-crit" style="display:none">add criterion</div></p>
 			<div id="criteria"></div>
+
+			* value can be either a single number, a range "a..b" or a set "3, 5, 8, 10"
+	
 					
 	</div>
 
@@ -376,7 +378,7 @@
 
 			
 				<label for="kind"><select class="kind" class="form-control"></select></label>
-				
+
 				<span class="val-span">
 					<label for="val">value <input type="text" class="val"></input></label>
 					<span><img class="tiny-keybaord" src="icons/piano.png" alt="image" width="20"></span>

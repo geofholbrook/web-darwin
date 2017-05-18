@@ -3,7 +3,7 @@ var ac = new AudioContext();
 var loaded = false;
 var pitches = [];
 var timeouts = [];
-var bpm = 500;
+var bpm = 144;
 count=0;
 
 
@@ -24,7 +24,7 @@ schedule = function(pitches_){
             var when = i*bpm;
             this.timeouts.push(setTimeout(function(){
                 var pitch = pitches[count];
-                voice.play(pitch, ac.currentTime, {gain:1, duration:bpm/1000});//.stop(ac.currentTime + bpm);
+                voice.play(pitch, ac.currentTime, {gain:1, duration:60000/bpm/4});//.stop(ac.currentTime + bpm);
                 count++;
             }, when));
         }

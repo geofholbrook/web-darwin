@@ -2,6 +2,7 @@
 
 // uses geof.js
 
+//! like % but the output range doesn't necessarily start at 0
 function range_modulo (num, range) {
 	var min = range[0];
 	var max = range[1];
@@ -16,6 +17,8 @@ function choose_other (num, range) {
 	return range_modulo (num + Gf.rrnd(1, (max-min)), range);	
 }
 
+// a specimen is always represented by a list of integers
+// for this Object it's in .nucl
 function Specimen (len, range) {
 
 	this.range = range;
@@ -29,6 +32,7 @@ function Specimen (len, range) {
 	// lower fitness value means better specimen
 	// 0 means perfect
 
+	// links to containers
 	this.population = null;
 	this.engine = null;
 }
@@ -74,14 +78,16 @@ Specimen.prototype.evaluate = function() {
 	return spec;
 }
 
+
 function Population (capacity, litter_size, model) {
-	this.capacity = capacity;
-	this.litter_size = litter_size;
-	this.model = model;
+	this.capacity = capacity;  // initial size
+	this.litter_size = litter_size;   // offspring per specimen
+	this.model = model; // example specimen
 
 	this.specimens = [];
 	this.randomize();
-	this.engine = null;
+
+	this.engine = null;  // link to container
 }
 
 Population.prototype.randomize = function() {
@@ -92,7 +98,7 @@ Population.prototype.randomize = function() {
 			new Specimen( this.model.len, this.model.range ) )
 	}
 
-	// doesn't work, because 'this' returns the window object.
+	// the following doesn't work, because 'this' returns the window object.
 	// this.specimens.map( function(spec) { spec.population = this } );
 }
 
@@ -111,6 +117,7 @@ function Engine (population) {
 	this.generation = 0;
 }
 
+// execute one generation
 Engine.prototype.iterate = function() {
 
     // console.log("iterate()");
@@ -138,7 +145,12 @@ Engine.prototype.iterate = function() {
 	return this.population.best(); // most fit specimen
 }
 
+
 function link_GA_objects (eng) {
+
+// so that individuals can reference the containing engine and population.
+// not done from inside constructors because jQuery causes "this" to
+// represent the window object.
 
 	eng.population.engine = eng;
 
