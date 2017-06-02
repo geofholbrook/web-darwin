@@ -8,6 +8,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
+  <link rel="stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.16/themes/pepper-grinder/jquery-ui.css">
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -23,9 +24,11 @@
   <script src="scripts/soundfont-player.min.js"></script>
   <script src="scripts/playback.js"></script>
 
+  <!-- Pure CSS3 Piano by Taufik Nurrohman -->
+  <link rel="stylesheet" href="scripts/piano-styles.css">
+  <script src="scripts/piano.js"></script>
+
   <style>
-
-
 
   svg {
   	width: 100%;
@@ -41,10 +44,15 @@
   	top:5px;
   }
 
-  .tiny-keybaord {
-  	position: absolute;
+  .tiny-keyboard {
+	position: absolute;
   	right:15px;
   	bottom:-2px;
+}
+
+  .keyb-dialog {
+  	width:400px;
+  	height:200px;
   }
 
   #info_disp {
@@ -75,11 +83,6 @@
 
   .form-inline input[type=text] { text-align:center }
 
-  /*#row-add-crit, #row-remove-crit {
-  	margin-top: 8px;
-  	margin-right: 5px;
-  }*/
-
   #row-buttons {
   	position:absolute;
   	right:5px;
@@ -93,6 +96,11 @@
   	left:10px;
   	float: left;
   	margin-top: 10px !important;
+  }
+
+  #dialog {
+  	width: 500px;
+  	height: 500px;
   }
 
   </style>
@@ -126,8 +134,6 @@
 	stave.setContext(context).draw();
 
     /////
-
-    
     
 	 $.each(criterion_kinds, function (k) {
 	 	$('#crit_template .kind').append($('<option>', {
@@ -146,6 +152,8 @@
     	update_to_data( $(this).closest(".row-container") );
     	update_engine();	 
     });
+
+
 
     
 
@@ -167,6 +175,8 @@
 		new_crit_form.data("crit", critObj);
 
 		update_from_data(new_crit_form);
+
+		new_crit_form.find(".tiny-keyboard").click( keyb_dialog );
 
 		return new_crit_form;
     }
@@ -280,12 +290,12 @@
 		gaTimer = setInterval( iterate_and_display, 50);
 	}
 
+
 	$("#iterate").click( iterate_and_display );
 
 	$("#start-ga").click( start_ga );
 
 	$("#pause-ga").click( pause_ga );
-
 
 		// playback 
 	$("#play").click( function () {
@@ -297,7 +307,34 @@
 	});
 
 
+	function keyb_dialog () {
+
+		console.log("clicked the tiny keyboard")
+
+		$dialog = $('<div/>')
+		$dialog.attr("class", "keyb-dialog")
+
+		$dialog_main = $('<div/>')
+		$dialog_main.attr("class", "keyb-main")
+
+		$dialog.attr("title", "keyboard selector")
+
+		$dialog.append($dialog_main)
+
+		$("body").append( $dialog )
+
+		$dialog.dialog( {
+			width: 800,
+			height: 300 }
+		)
+
+		piano(document.querySelector(".keyb-main"), {octaves:2})
+
+	}
+
     $("#criteria").append( make_crit( default_crit() ).show());
+
+
 
     engine = new Engine();
     update_engine();
@@ -314,8 +351,6 @@
 
     redraw_music();
 
-
-
 	// convenient breakpoint for js console
     $("");
 
@@ -325,6 +360,7 @@
 </head>
 
 <body>
+
 	<div class="container">
 		<div class ="text-center">
 			<h1>musical GA in development</h1>
@@ -381,7 +417,7 @@
 
 				<span class="val-span">
 					<label for="val">value <input type="text" class="val"></input></label>
-					<span><img class="tiny-keybaord" src="icons/piano.png" alt="image" width="20"></span>
+					<span><img class="tiny-keyboard" src="icons/piano.png" alt="image" width="20"></span>
 				</span>
 						
 				<label for="freq">freq <input type="number" class="freq" min="0" max="100" step="5"/></input></label>
@@ -400,5 +436,4 @@
         </form>
 
 	</div>
-
 </body>
